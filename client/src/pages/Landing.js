@@ -1,8 +1,10 @@
 import Logo from '../component/Logo'
 import main from '../assets/images/main.svg'
+import Wrapper from '../assets/wrappers/LandingPage'
 const Landing = () => {
     return (
         <>
+        <Wrapper>
             <nav>
                 <Logo />
             </nav>
@@ -17,6 +19,7 @@ const Landing = () => {
                 <img src={main} alt="JOB BLAST " className='img main-img' />
             </div>
 
+                    </Wrapper>
         </>
     )
 }
