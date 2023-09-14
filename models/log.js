@@ -1,0 +1,22 @@
+let mongoose = require("mongoose");
+let dotenv = require('dotenv');
+
+dotenv.config();
+
+
+
+mongoose.connect(process.env.DB);
+
+let login = mongoose.Schema({
+    name: String,
+    email:String,
+    password:String,
+    date:{
+        type :Date ,
+        default : new Date()
+    }
+});
+
+let USERS = mongoose.model('user',login);
+
+module.exports = USERS ;
