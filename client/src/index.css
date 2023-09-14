@@ -101,6 +101,7 @@ h4,
 h5 {
   margin: 0;
   font-weight: 400;
+  
   line-height: 1;
   text-transform: capitalize;
   letter-spacing: var(--letter-spacing);
@@ -328,4 +329,27 @@ button:disabled {
 .declined {
   background: #ffeeee;
   color: #d66a6a;
+}
+.pass{
+  border: transparent;
+  background-image: url("https://img.icons8.com/material-sharp/20/000000/visible.png");
+  background-position: 97% center;
+  background-repeat: no-repeat;
+  appearance: none;
+  -webkit-appearance: none;
+  height: 30px;
+  width: 30px;
+  position: relative;
+  margin-right: -20px;
+  margin-top: 13px;
+  
+}
+
+
+
+
+
+
+input[type = "checkbox"]:checked{
+  background-image: url("https://img.icons8.com/material-outlined/20/000000/invisible.png");
 }

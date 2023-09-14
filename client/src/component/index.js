@@ -1,3 +1,5 @@
 import Logo from './Logo'
+import Formin from './Formio'
+import Alert from './Alert'
 
-export{Logo}
+export{Logo , Formin,Alert}
