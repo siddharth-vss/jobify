@@ -66,8 +66,11 @@ const Register = () => {
             value={form.password}
             name={"password"}
             onChange={handleChange}
+            checkbox={true}
+            confirm={!form.password}
+            func={showpass}
           />
-          <input disabled={!form.password}  className='pass' type='checkbox'  onClick={showpass}  />
+          
           {/* {form.password.length >= 0 && form.password.length} */}
 
 
@@ -91,22 +94,8 @@ const Register = () => {
         </form>
 
       </Wrapper>
-      {/*
-|--------------------------------------------------
-| only remove the  *//* from below code 
-|--------------------------------------------------
-*/}
-      {/*form.length >0 && <ul>{
-       form.map( (e)=>{
-      return (
-       
-        <li>
-          <h1>{e.name}</h1>
-          <p>{e.email}</p>
-        </li>
-
-      )
-    } )} </ul>*/}
+     
+      
     </>
   )
 }

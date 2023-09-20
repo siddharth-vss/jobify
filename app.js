@@ -1,26 +1,38 @@
+/**
+|--------------------------------------------------
+| import moduals from packedges
+|--------------------------------------------------
+*/
 let express = require('express');
 let bodyParser=require("body-parser");
+let dotenv = require('dotenv');
 let app = express();
-let USERS = require('./models/log')
+let jobs = require('./routes/jobs')
+
+/**
+|--------------------------------------------------
+| use moduals
+|--------------------------------------------------
+*/
+
+dotenv.config();
+
+
+/**
+|--------------------------------------------------
+| use auth moduals
+|--------------------------------------------------
+*/
+
 app.use(bodyParser.json());
+app.use(express.json());
 
 
- 
-app.get('/',async(req,res)=>{
-    let user = await USERS.find({});
-    res.json({user})
-})
+app.use('/',require('./routes/auth'));
+app.use('/jobs',jobs);
 
-app.post('/',async(req,res)=>{
-    let user = await USERS.find({});
-    let data = await USERS.create({
-        name: req.body.name,
-        email: req.body.email,
-        password: req.body.password,
-    })
-    console.log(data);
-
-    res.json({user});
+app.get('*',(req,res)=>{
+    res.send(`<h1>ROUTE DOES NOT EXIST</h1>`);
 })
 
 app.listen(process.env.PORT,()=>{
