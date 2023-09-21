@@ -1,48 +1,47 @@
-import { useEffect,useState} from 'react';//, useEffect
-import { useNavigate} from 'react-router-dom';//, useEffect
+import { useEffect, useState } from 'react';//, useEffect
+import { useNavigate } from 'react-router-dom';//, useEffect
 import { Logo, Formin, Alert } from '../component';
 import Wrapper from '../assets/wrappers/RegisterAndLoginPage';
 import { useAppContext } from '../context/appContext';
 import '../index.css'
 
-const Register = () => {
+const Login = () => {
  
   let navigate = useNavigate();
 
   const [form, setForm] = useState({ email: "", password: "" });
-  const { isLoading, showAlert, displayAlert ,registerUser,user} = useAppContext();
+  const { isLoading, showAlert, displayAlert,user,loginUser } = useAppContext();
 
-  
   const onSubmit = async (e) => {
     e.preventDefault();
-    const { email, password, name ,location } = form;
-    if (!email || !password || !name || !location) {
+    const { email, password } = form;
+    if (!email || !password ) {
       displayAlert();
       return;
     }
-    const currentUser = {name,  email ,password,location};
-    registerUser(currentUser);
-    // const response = await fetch("http://localhost:5000", {
+
+    const curentuser = { email , password};
+    loginUser(curentuser);
+    // const response = await fetch("http://localhost:5000/login", {
     //   method: 'POST',
     //   body: JSON.stringify(form),
     //   headers: {
     //     'Content-Type': 'application/json'
     //   }
     // })
-  //   if (response.status === 200) {
-  //     const data = await response.json();
-  //     console.log(data);
-  //     navigate('/login');
+    // if (response.status === 200) {
+    //   const data = await response.json();
+    //   console.log(data);
+    //   navigate('/');
 
 
-  //   } else {
+    // } else {
       
-  //      displayAlert();
-  //   }
-  //   console.log(response);
+    //    displayAlert();
+    // }
   }
-  const toggelmember = () => { navigate('/login'); }
-  const pass = document.getElementById("password");
+  const toggelmember = () => {navigate('/register');}
+  const pass = document.getElementById("pass");
 
 
   const showpass = () => {
@@ -58,40 +57,28 @@ const Register = () => {
   }
 
 
-
-   useEffect( ()=>{
-    if(user){
-      setTimeout(() => {
-        navigate('/login');
-      }, 3000);
-    }
-    },[navigate, user]);
+ useEffect( ()=>{
+   
+  if(user){
+     setTimeout(()=>{
+          navigate('/');
+     },3000)
+  }
+ },[navigate, user]);
 
   return (
     <>
       <Wrapper className='full-page'>
         <form className='form' onSubmit={onSubmit}>
           <Logo />
-          <h3>REGISTER</h3>
+          <h3>LOGIN</h3>
           {showAlert && <Alert />}
           {/*<Alert alert={"success"}/>*/}
 
           {/* name field */}
 
 
-          
-            <Formin
-              type={"text"}
-              value={form.name}
-              name={"name"}
-              onChange={handleChange}
-            />
-            <Formin
-              type={"text"}
-              value={form.location}
-              name={"location"}
-              onChange={handleChange}
-            />
+        
 
           <Formin
             type={"email"}
@@ -100,6 +87,7 @@ const Register = () => {
             onChange={handleChange}
           />
           <Formin
+            id={"pass"}
             type={"password"}
             value={form.password}
             name={"password"}
@@ -115,15 +103,15 @@ const Register = () => {
 
 
 
-          <button type='submit' className='btn btn-block' disabled={isLoading || !form.email || form.password < 8  || !form.name || !form.location} >
+          <button type='submit' className='btn btn-block' disabled={isLoading || form.password.length < 8 || !form.email.length  } >
             submit
           </button>
 
 
           <p>
-             Alredy Member?
+            Not a Member Yet ?
             <button type='button' className='member-btn' onClick={toggelmember}>
-             LOGIN 
+              { "REGISTER"}
             </button>
           </p>
 
@@ -138,4 +126,4 @@ const Register = () => {
   )
 }
 
-export default Register
+export default Login

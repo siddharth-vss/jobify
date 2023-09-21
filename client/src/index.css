@@ -337,6 +337,7 @@ button:disabled {
   background-position: 97% center;
   background-repeat: no-repeat;
   appearance: none;
+  cursor: grabbing;
   -webkit-appearance: none;
   height: 30px;
   width: 30px;
@@ -346,6 +347,11 @@ button:disabled {
   
 }
 
+.pass:checked {
+  cursor: grab;
+  background-image: url("https://img.icons8.com/material-outlined/20/000000/invisible.png");
+}
+
 .check{
  display: flex;
 }
@@ -353,6 +359,3 @@ button:disabled {
 
 
 
-input[type = "checkbox"]:checked{
-  background-image: url("https://img.icons8.com/material-outlined/20/000000/invisible.png");
-}

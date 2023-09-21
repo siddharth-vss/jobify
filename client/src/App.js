@@ -1,9 +1,10 @@
 
-import { BrowserRouter,  Route, Routes  } from 'react-router-dom';
+import { BrowserRouter,  Route, Routes} from 'react-router-dom';
 import React from 'react'
-import {Dashboard,Landing,Register,Error} from './pages/index'
+import {Dashboard,Landing,Register,Error,Login} from './pages/index'
 
-function App() {
+const App =()=>{
+  
   return (
     <>
   
@@ -17,6 +18,7 @@ function App() {
         <Routes>
           <Route path='/' element={ <Dashboard/>} />
           <Route path="/register" element={<Register/>} />
+          <Route path="/login" element={<Login/>} />
           <Route path="/landing" element={<Landing />} />
           <Route path="*" element={<Error/>} />
         </Routes>

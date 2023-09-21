@@ -27,6 +27,7 @@ router.route('/').get((req,res)=>{res.send(`<marquee><h1>WELCOME TO JOBIFY</h1><
 router.route('/').post([
 body('name','Enter a valid name').isLength({min : 3}),
 body('email', 'Enter a valid email').isEmail(),
+body('location', 'Enter a valid location').isLength({min : 3}),
 body('password', 'Password must be atleast 8 characters').isLength({ min: 8 }),
 
 ],register);

@@ -9,6 +9,7 @@ mongoose.connect(process.env.DB);
 
 let login = mongoose.Schema({
     name: String,
+    location: String,
     email:String,
     password:String,
     source:String,

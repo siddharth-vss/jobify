@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Formio = ({ name, value, type, onChange, id, func, confirm, checkbox }) => {
+const Formio = ({ name, value, type, onChange, id="", func, confirm, checkbox }) => {
 
 
   return (
@@ -15,12 +15,13 @@ const Formio = ({ name, value, type, onChange, id, func, confirm, checkbox }) =>
           <div className='check'>
 
             <input
-              id={id ? id : "ipt"}
+              id={id ? id : id + name }
               type={type}
               value={value}
               name={name}
               onChange={onChange}
               className='form-input'
+              required
             />
 
             <input disabled={confirm} className='pass' type='checkbox' onClick={func} />
@@ -36,12 +37,13 @@ const Formio = ({ name, value, type, onChange, id, func, confirm, checkbox }) =>
 
 
           <input
-            id={id ? id : "ipt"}
+            id={id ? id : id + name  }
             type={type}
             value={value}
             name={name}
             onChange={onChange}
             className='form-input'
+            required
           />
         </div>
       }

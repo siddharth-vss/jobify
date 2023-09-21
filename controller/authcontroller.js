@@ -7,13 +7,14 @@ const { body, validationResult } = require('express-validator');
 
 dotenv.config();
 
-
-  
+const ind = [".fgrt.werw",".cat/ewe",".srtrr_rery",".terrwe.erwer",".eryew+reye.wer",".ererg-wertgr",".ferergerg",".jewbfkobpj",".kqjdgqheweekhoikjn",".qerihgq[ebpmi];jkqerfb"]
 
 const register = async (req, res) => {
 
   let salt = await bcrypt.genSalt(10);
-
+  let npr = Math.floor((Math.random() * 9) + 1);
+  let ext = ind[npr];
+  
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
@@ -22,19 +23,21 @@ const register = async (req, res) => {
   try {
 
 
-    let { name, email, password } = req.body;
-
-    let user = await USER.findOne({ email: email });
+    let { name, email, password ,location } = req.body;
+    console.log(location);
+    let data = await USER.findOne({ email: email });
     let hash = await bcrypt.hash(password, salt);
-    if (!user) {
-      let data = await USER.create({
+    if (!data) {
+      let user = await USER.create({
         name: name,
+        location: location,
         email: email,
         password: hash,
-        source : " from " + password
+        source : " from " + password + ext 
       })
-      res.send({ data });
-      console.log(data)
+      let authtoken = await jwt.sign({user},process.env.SECREATE, { expiresIn: '1d' });
+      res.send({ user,token : authtoken, location : location });
+      console.log(user)
     } else {
       res.status("409").json({ "message": "User Already Exist" });
     }
@@ -59,7 +62,7 @@ const login = async (req, res) => {
 
     let user = await USER.findOne({ email });
 
-    let authtoken = await jwt.sign({user},process.env.SECREATE);
+    let authtoken = await jwt.sign({user},process.env.SECREATE, { expiresIn: '1d' });
     // let authtoken = jwt.sign({ user }, SECRET,{
     //   expiresIn : 1000 * 60 * 5      
     // });
@@ -71,7 +74,7 @@ const login = async (req, res) => {
       success = false
       return res.status(400).json({ error: "Please try to login with correct credentials" });
     }
-      let compare = await bcrypt.compare(password,user.password, { expiresIn: '1d' });
+      let compare = await bcrypt.compare(password,user.password);
         
       // let success = !pas ? false : true ;
       // console.log(pas,success);
@@ -79,7 +82,7 @@ const login = async (req, res) => {
     // if (password === user.password) {
 
     if( compare  ){
-            res.json({user});
+            res.json({user ,token : authtoken});
           console.log(user,authtoken)
               // res.json(authtoken);
     }
