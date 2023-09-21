@@ -63,7 +63,7 @@ const Register = () => {
     if(user){
       setTimeout(() => {
         navigate('/login');
-      }, 3000);
+      }, 2000);
     }
     },[navigate, user]);
 
