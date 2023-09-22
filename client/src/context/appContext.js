@@ -1,9 +1,21 @@
 import React, {  useReducer, useContext } from 'react';
 import reducer from './reducer';
-import {DISPLAY_ALERT , CLEAR_ALERT , REGISTER_USER_BEGIN, REGISTER_USER_ERROR ,REGISTER_USER_SUCCESS } from './actions'
+import {DISPLAY_ALERT ,
+        CLEAR_ALERT ,
+        REGISTER_USER_BEGIN,
+        REGISTER_USER_ERROR ,
+        REGISTER_USER_SUCCESS,
+        LOGIN_USER_BEGIN,
+        LOGIN_USER_ERROR ,
+        LOGIN_USER_SUCCESS,
+        SETUP_USER_BEGIN,
+        SETUP_USER_ERROR ,
+        SETUP_USER_SUCCESS,
+      
+      } from './actions'
 import axios from 'axios';
 
-
+const PORT = 'http://localhost:5000';
 const token = localStorage.getItem('token');
 const user = localStorage.getItem('user');
 const userLocation = localStorage.getItem('location');
@@ -31,6 +43,27 @@ const AppProvider = ({ children }) => {
   };
   
 
+
+  const setupUser = async ({ currentUser, endPoint, alertText }) => {
+    dispatch({ type: SETUP_USER_BEGIN });
+    try {
+      const { data } = await axios.post(`${PORT}/${endPoint}`, currentUser);
+  
+      const { user, token, location } = data;
+      dispatch({
+        type: SETUP_USER_SUCCESS,
+        payload: { user, token, location, alertText },
+      });
+      addUserToLocalStorage({ user, token, location });
+    } catch (error) {
+      dispatch({
+        type: SETUP_USER_ERROR,
+        payload: { msg: error.response.data.msg },
+      });
+    }
+    clearAlert();
+  };
+
   const clearAlert = () => {
     setTimeout(() => {
       dispatch({
@@ -56,7 +89,7 @@ const AppProvider = ({ children }) => {
   const registerUser = async (currentUser) => {
     dispatch({ type: REGISTER_USER_BEGIN });
     try {
-      const response = await axios.post('/', currentUser);
+      const response = await axios.post(`${PORT}`, currentUser);
       console.log(response.data);
       const { user, token, location } = response.data;
       dispatch({
@@ -85,14 +118,14 @@ const AppProvider = ({ children }) => {
 
 
   const loginUser = async(currentUser) =>{
-    dispatch({ type : REGISTER_USER_BEGIN});
+    dispatch({ type : LOGIN_USER_BEGIN});
     try {
-      const response = await axios.post('/login',currentUser);
+      const response = await axios.post(`${PORT}/login`,currentUser);
       console.log(response.data);
       const{user , location, token} = response.data;
 
       dispatch({
-        type : REGISTER_USER_SUCCESS,
+        type : LOGIN_USER_SUCCESS,
         payload:{
           user,
           token,
@@ -106,7 +139,7 @@ const AppProvider = ({ children }) => {
     } catch (error) {
       console.log(error.response);
       dispatch({
-        type: REGISTER_USER_ERROR,
+        type: LOGIN_USER_ERROR,
         payload: { msg: error.response.data.error },
       });
     }
@@ -122,7 +155,9 @@ const AppProvider = ({ children }) => {
         ...state,
         displayAlert,
         registerUser,
-        loginUser
+        loginUser,
+        removeUserFromLocalStorage,
+        setupUser,
       }}
     >
       {children}

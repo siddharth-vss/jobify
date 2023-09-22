@@ -35,7 +35,7 @@ router.route('/login').post([
 
     body('email', 'Enter a valid email').isEmail(),
     body('password', 'Password must be atleast 8 characters').isLength({ min: 8 }),
-    
+     
     ],login);
 
 
