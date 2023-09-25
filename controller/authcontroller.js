@@ -83,7 +83,7 @@ const login = async (req, res) => {
 
     if( compare  ){
             res.json({user ,token : authtoken,location : user.location});
-          console.log(user,authtoken)
+          // console.log(user,authtoken)
               // res.json(authtoken);
     }
     else {

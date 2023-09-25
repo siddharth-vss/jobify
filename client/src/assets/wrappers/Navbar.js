@@ -47,6 +47,14 @@ const Wrapper = styled.nav`
     .logo-text {
       display: block;
     }
+    @media (max-width: 992px) {
+      
+      .logo {
+        display: block;
+      }
+      .logo-text {
+        display: none;
+      }
   }
 `;
 export default Wrapper;
