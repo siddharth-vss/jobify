@@ -31,8 +31,9 @@ const Wrapper = styled.nav`
     width: 100px;
   }
   .btn-container {
-    display: flex;
-    align-items: center;
+    position: relative;
+    /*display: flex;
+    align-items: center;*/
   }
   @media (min-width: 992px) {
     position: sticky;
