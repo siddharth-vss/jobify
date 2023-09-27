@@ -3,6 +3,9 @@ let USER = require('../models/log');
 let bcrypt = require('bcryptjs');
 let jwt = require('jsonwebtoken');
 let dotenv = require('dotenv');
+let mongoose =require('mongoose');
+
+
 const { body, validationResult } = require('express-validator');
 
 dotenv.config();
@@ -56,19 +59,14 @@ const login = async (req, res) => {
   }
   
   const { email, password } = req.body;
-  console.log(email);
+
 
   try {
 
     let user = await USER.findOne({ email });
 
     let authtoken = await jwt.sign({user},process.env.SECREATE, { expiresIn: '1d' });
-    // let authtoken = jwt.sign({ user }, SECRET,{
-    //   expiresIn : 1000 * 60 * 5      
-    // });
-
-
-    // console.log(authtoken);
+   
     if (!user) {
 
       success = false
@@ -76,15 +74,11 @@ const login = async (req, res) => {
     }
       let compare = await bcrypt.compare(password,user.password);
         
-      // let success = !pas ? false : true ;
-      // console.log(pas,success);
-
-    // if (password === user.password) {
+      
 
     if( compare  ){
             res.json({user ,token : authtoken,location : user.location});
-          // console.log(user,authtoken)
-              // res.json(authtoken);
+          
     }
     else {
       success = false
@@ -101,13 +95,36 @@ const login = async (req, res) => {
 
 }
 
-const updateUser = () => {
-  console.log('updateUser');
-  USER.findOneAndUpdate()
 
-}
+
+const updateUser = async (req, res) => {
+ 
+  console.log(req.user);
+  let id = req.user;
+   const{email , location , name , age}= req.body;
+console.log(req.body);
+  //  if(!email || !location || !name || !age){
+  //      res.status(400).send("Please provide all values");
+  //  }
+
+   const data = await USER.findOne({_id : id});
+   if(data){
+  //  console.log(user);
+     let rep = await USER.findOneAndUpdate({_id : id },{$set: {
+        email     :    email ?   email     :      data.email,
+        location  :    location? location  :      data.location,
+        name      :    name?     name      :      data.name,
+        age      :    age?     age      :      data.age,
+        ugdate:  new Date()
+      }});
+
+     let user = await USER.findOne({_id:id});
+      let token = jwt.sign({user},process.env.SECREATE, { expiresIn: '1d' });
+       res.json({user,token,location:data.location});
+       }};
 
 
 module.exports = { register, login, updateUser }
+
 
 

@@ -13,6 +13,8 @@ let login = mongoose.Schema({
     email:String,
     password:String,
     source:String,
+    age:String,
+    ugdate:Date,
     date:{
         type :Date ,
         default : new Date()

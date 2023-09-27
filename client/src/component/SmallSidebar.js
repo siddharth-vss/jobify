@@ -13,7 +13,7 @@ const SmallSidebar = () => {
 
 
 const { showSidebar, toggleSidebar } = useAppContext();
-console.log(showSidebar);
+
   return (
     <Wrapper>
      <div className={

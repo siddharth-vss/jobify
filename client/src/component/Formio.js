@@ -2,7 +2,11 @@ import React from 'react'
 
 const Formio = ({ name, value, type, onChange, id="", func, confirm, checkbox }) => {
 
-
+/**
+|--------------------------------------------------|
+| consirm prop is use for check box to disable     |
+|--------------------------------------------------|
+*/
   return (
     <>
 

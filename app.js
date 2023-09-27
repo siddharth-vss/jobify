@@ -7,7 +7,9 @@ let express = require('express');
 let bodyParser=require("body-parser");
 let dotenv = require('dotenv');
 let app = express();
-let jobs = require('./routes/jobs')
+let jobs = require('./routes/jobs');
+let user = require('./routes/auth');
+let cors = require('cors');
 
 /**
 |--------------------------------------------------
@@ -26,9 +28,10 @@ dotenv.config();
 
 app.use(bodyParser.json());
 app.use(express.json());
+app.use(cors({credentials:true}));
 
 
-app.use('/',require('./routes/auth'));
+app.use('/',user);
 app.use('/jobs',jobs);
 
 app.get('*',(req,res)=>{

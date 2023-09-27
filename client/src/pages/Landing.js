@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom'
 
 
 const Landing = () => {
+    document.title = 'JOBIFY';
     return (
         <>
             <Wrapper>

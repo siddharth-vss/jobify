@@ -9,9 +9,10 @@ const Navbar = () => {
   
 
 const [showLogout, setShowLogout] = useState(false)
-const { toggleSidebar ,showSidebar,user, logoutUser} = useAppContext();
-console.log(showSidebar);
-console.log(showLogout);
+const { toggleSidebar ,
+  // showSidebar,
+  user, logoutUser} = useAppContext();
+
   return (
     <Wrapper>
       <div className='nav-center'>

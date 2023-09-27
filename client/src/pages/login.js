@@ -6,6 +6,7 @@ import { useAppContext } from '../context/appContext';
 import '../index.css'
 
 const Login = () => {
+  document.title = 'JOBIFY-Login';
  
   let navigate = useNavigate();
 
@@ -22,23 +23,13 @@ const Login = () => {
 
     const curentuser = { email , password};
     loginUser(curentuser);
-    // const response = await fetch("http://localhost:5000/login", {
-    //   method: 'POST',
-    //   body: JSON.stringify(form),
-    //   headers: {
-    //     'Content-Type': 'application/json'
-    //   }
-    // })
-    // if (response.status === 200) {
-    //   const data = await response.json();
-    //   console.log(data);
-    //   navigate('/');
+  }
+  const demo = async (e) => {
+    e.preventDefault();
+    
 
-
-    // } else {
-      
-    //    displayAlert();
-    // }
+    const curentuser = { email:"testuser@gmail.com" , password:"testuser"};
+    loginUser(curentuser);
   }
   const toggelmember = () => {navigate('/register');}
   const pass = document.getElementById("pass");
@@ -105,6 +96,9 @@ const Login = () => {
 
           <button type='submit' className='btn btn-block' disabled={isLoading || form.password.length < 8 || !form.email.length  } >
             submit
+          </button>
+          <button type='button' onClick={demo} className='btn btn-block'  >
+            Explore the app
           </button>
 
 

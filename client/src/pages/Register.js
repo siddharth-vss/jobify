@@ -6,6 +6,7 @@ import { useAppContext } from '../context/appContext';
 import '../index.css'
 
 const Register = () => {
+  document.title = 'JOBIFY-Register';
  
   let navigate = useNavigate();
 
