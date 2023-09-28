@@ -26,6 +26,9 @@ const user = localStorage.getItem('user');
 const userLocation = localStorage.getItem('location');
 
 
+  
+
+
 export const initialState = {
   showSidebar: false,
   isLoading: false,
@@ -36,6 +39,21 @@ export const initialState = {
   token: token,
   userLocation: userLocation || '',
   jobLocation : userLocation || '',
+
+  /**
+  |--------------------------------------------------|
+  |       for job                                    |
+  |--------------------------------------------------|
+  */
+ isEditing: false,
+  editJobId: '',
+  position: '',
+  company: '',
+  // jobLocation
+  jobTypeOptions: ['full-time', 'part-time', 'remote', 'internship'],
+  jobType: 'full-time',
+  statusOptions: ['pending', 'interview', 'declined'],
+  status: 'pending',
 };
 
 
