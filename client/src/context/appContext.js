@@ -1,4 +1,5 @@
-import React, { useReducer, useContext } from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useReducer, useContext  } from 'react';
 import reducer from './reducer';
 import {
   DISPLAY_ALERT,
@@ -62,6 +63,13 @@ export const initialState = {
   jobType: 'full-time',
   statusOptions: ['pending', 'interview', 'declined'],
   status: 'pending',
+
+
+
+  jobs: [],
+  totalJobs: 0,
+  numOfPages: 1,
+  page: 1,
 };
 
 
@@ -81,284 +89,302 @@ const AppProvider = ({ children }) => {
   });
 
 
-// response interceptor
-sp.interceptors.request.use(
-  (config) => {
-    config.headers['Authorization'] = `Bearer ${state.token}`;
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
-// response interceptor
-sp.interceptors.response.use(
-  (response) => {
-    return response;
-  },
-  (error) => {
-    // console.log(error.response);
-    if (error.response.status === 401) {
-      logoutUser();
+  // response interceptor
+  sp.interceptors.request.use(
+    (config) => {
+      config.headers['Authorization'] = `Bearer ${state.token}`;
+      return config;
+    },
+    (error) => {
+      return Promise.reject(error);
     }
-    return Promise.reject(error);
-  }
-);
-
-
-const displayAlert = () => {
-  dispatch({
-    type: DISPLAY_ALERT,
-  });
-  clearAlert();
-};
-
-const setupUser = async ({ currentUser, endPoint, alertText }) => {
-  dispatch({ type: SETUP_USER_BEGIN });
-  try {
-    const { data } = await sp.post(`/${endPoint}`, currentUser);
-
-    const { user, token, location } = data;
-    dispatch({
-      type: SETUP_USER_SUCCESS,
-      payload: { user, token, location, alertText },
-    });
-    addUserToLocalStorage({ user, token, location });
-  } catch (error) {
-    dispatch({
-      type: SETUP_USER_ERROR,
-      payload: { msg: error.response.data.msg },
-    });
-  }
-  clearAlert();
-};
-
-const clearAlert = () => {
-  setTimeout(() => {
-    dispatch({
-      type: CLEAR_ALERT,
-    });
-  }, 3000);
-};
-
-const addUserToLocalStorage = ({ user, token, location }) => {
-  localStorage.setItem('user', JSON.stringify(user));
-  localStorage.setItem('token', token);
-  localStorage.setItem('location', location);
-};
-
-const removeUserFromLocalStorage = () => {
-  localStorage.removeItem('token');
-  localStorage.removeItem('user');
-  localStorage.removeItem('location');
-};
-
-const registerUser = async (currentUser) => {
-  dispatch({ type: REGISTER_USER_BEGIN });
-  try {
-    const response = await sp.post('/', currentUser);
-    console.log(response.data);
-    const { user, token, location } = response.data;
-    dispatch({
-      type: REGISTER_USER_SUCCESS,
-      payload: {
-        user,
-        token,
-        location,
-      },
-    });
-
-    addUserToLocalStorage({
-      user,
-      token,
-      location,
-    })
-  } catch (error) {
-    console.log(error.response);
-    dispatch({
-      type: REGISTER_USER_ERROR,
-      payload: { msg: error.response.data.message },
-    });
-  }
-  clearAlert();
-};
-
-const loginUser = async (currentUser) => {
-  dispatch({ type: LOGIN_USER_BEGIN });
-  try {
-    const response = await sp.post('/login', currentUser);
-    console.log(response.data);
-    const { user, location, token } = response.data;
-
-    dispatch({
-      type: LOGIN_USER_SUCCESS,
-      payload: {
-        user,
-        token,
-        location
+  );
+  // response interceptor
+  sp.interceptors.response.use(
+    (response) => {
+      return response;
+    },
+    (error) => {
+      // console.log(error.response);
+      if (error.response.status === 401) {
+        logoutUser();
       }
-    });
-    addUserToLocalStorage({
-      user,
-      token,
-      location,
-    })
-  } catch (error) {
-    console.log(error.response);
+      return Promise.reject(error);
+    }
+  );
+
+
+  const displayAlert = () => {
     dispatch({
-      type: LOGIN_USER_ERROR,
-      payload: { msg: error.response.data.error },
+      type: DISPLAY_ALERT,
     });
-  }
-  clearAlert();
-};
+    clearAlert();
+  };
 
-const toggleSidebar = () => {
-  dispatch({ type: TOGGLE_SIDEBAR });
+  const setupUser = async ({ currentUser, endPoint, alertText }) => {
+    dispatch({ type: SETUP_USER_BEGIN });
+    try {
+      const { data } = await sp.post(`/${endPoint}`, currentUser);
 
-};
-
-const logoutUser = () => {
-  dispatch({ type: LOGOUT_USER })
-  removeUserFromLocalStorage()
-}
-
-const updateUser = async (currentUser) => {
-  dispatch({ type: UPDATE_USER_BEGIN });
-  try {
-    const { data } = await sp.patch('/update', currentUser);
-    console.log(data);
-    const { user, token, location } = data;
-
-    dispatch({
-      type: UPDATE_USER_SUCCESS,
-      payload: { user, location, token },
-    });
-
-    addUserToLocalStorage({ user, location, token: initialState.token });
-  } catch (error) {
-    if (error.response.status !== 401) {
+      const { user, token, location } = data;
       dispatch({
-        type: UPDATE_USER_ERROR,
+        type: SETUP_USER_SUCCESS,
+        payload: { user, token, location, alertText },
+      });
+      addUserToLocalStorage({ user, token, location });
+    } catch (error) {
+      dispatch({
+        type: SETUP_USER_ERROR,
         payload: { msg: error.response.data.msg },
       });
     }
+    clearAlert();
   };
-  clearAlert();
-
-}
-
-const clearValues = () => {
-  dispatch({ type: CLEAR_VALUES })
-}
-
-
-// const createJob = async () => {
-//   dispatch({ type: CREATE_JOB_BEGIN });
-//   try {
-//     const { position, company, jobLocation, jobType, status } = state;
-
-//     const LKJ = await sp.post('/jobs', {
-//       company,
-//       position,
-//       jobLocation,
-//       jobType,
-//       status,
-//     });
-
-//     console.log(LKJ);
-
-//     dispatch({
-//       type: CREATE_JOB_SUCCESS,
-//     });
-//     // call function instead clearValues()
-//     dispatch({ type: CLEAR_VALUES });
-//   } catch (error) {
-//     if (error.response.status === 401) return;
-//     dispatch({
-//       type: CREATE_JOB_ERROR,
-//       payload: { msg: error.response.data.msg },
-//     });
-
-//   }
-//   clearAlert();
-// };
-
-const createJob = async (currentUser) => {
-  dispatch({ type: CREATE_JOB_BEGIN });
-  try {
-    const response = await sp.post('/jobs', currentUser);
-    console.log(response.data);
-
-    dispatch({
-      type: CREATE_JOB_SUCCESS,
-
-    });
-
-  } catch (error) {
-    console.log(error.response);
-    dispatch({
-      type: CREATE_JOB_ERROR,
-      payload: { msg: "JOB CREATED" },
-    });
+    const setEditJob = (id) => {
+    console.log(`set edit job : ${id}`)
   }
-  clearAlert();
-};
+  const deleteJob = (id) =>{
+    console.log(`delete : ${id}`)
+  }
+  
+  const clearAlert = () => {
+    setTimeout(() => {
+      dispatch({
+        type: CLEAR_ALERT,
+      });
+    }, 3000);
+  };
+
+  const addUserToLocalStorage = ({ user, token, location }) => {
+    localStorage.setItem('user', JSON.stringify(user));
+    localStorage.setItem('token', token);
+    localStorage.setItem('location', location);
+  };
+
+  const removeUserFromLocalStorage = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    localStorage.removeItem('location');
+  };
+
+  const registerUser = async (currentUser) => {
+    dispatch({ type: REGISTER_USER_BEGIN });
+    try {
+      const response = await sp.post('/', currentUser);
+      console.log(response.data);
+      const { user, token, location } = response.data;
+      dispatch({
+        type: REGISTER_USER_SUCCESS,
+        payload: {
+          user,
+          token,
+          location,
+        },
+      });
+
+      addUserToLocalStorage({
+        user,
+        token,
+        location,
+      })
+    } catch (error) {
+      console.log(error.response);
+      dispatch({
+        type: REGISTER_USER_ERROR,
+        payload: { msg: error.response.data.message },
+      });
+    }
+    clearAlert();
+  };
+
+  const loginUser = async (currentUser) => {
+    dispatch({ type: LOGIN_USER_BEGIN });
+    try {
+      const response = await sp.post('/login', currentUser);
+      console.log(response.data);
+      const { user, location, token } = response.data;
+
+      dispatch({
+        type: LOGIN_USER_SUCCESS,
+        payload: {
+          user,
+          token,
+          location
+        }
+      });
+      addUserToLocalStorage({
+        user,
+        token,
+        location,
+      })
+    } catch (error) {
+      console.log(error.response);
+      dispatch({
+        type: LOGIN_USER_ERROR,
+        payload: { msg: error.response.data.error },
+      });
+    }
+    clearAlert();
+  };
+
+  const toggleSidebar = () => {
+    dispatch({ type: TOGGLE_SIDEBAR });
+
+  };
+
+  const logoutUser = () => {
+    dispatch({ type: LOGOUT_USER })
+    removeUserFromLocalStorage()
+  }
+
+  const updateUser = async (currentUser) => {
+    dispatch({ type: UPDATE_USER_BEGIN });
+    try {
+      const { data } = await sp.patch('/update', currentUser);
+      console.log(data);
+      const { user, token, location } = data;
+
+      dispatch({
+        type: UPDATE_USER_SUCCESS,
+        payload: { user, location, token },
+      });
+
+      addUserToLocalStorage({ user, location, token: initialState.token });
+    } catch (error) {
+      if (error.response.status !== 401) {
+        dispatch({
+          type: UPDATE_USER_ERROR,
+          payload: { msg: error.response.data.msg },
+        });
+      }
+    };
+    clearAlert();
+
+  }
+
+  const clearValues = () => {
+    dispatch({ type: CLEAR_VALUES })
+  }
 
 
-const handleChange = ({ name, value }) => {
-  dispatch({
-    type: HANDLE_CHANGE,
-    payload: { name, value },
-  })
-}
+  // const createJob = async () => {
+  //   dispatch({ type: CREATE_JOB_BEGIN });
+  //   try {
+  //     const { position, company, jobLocation, jobType, status } = state;
 
-const getJobs = async () => {
-  let url = `/jobs`
+  //     const LKJ = await sp.post('/jobs', {
+  //       company,
+  //       position,
+  //       jobLocation,
+  //       jobType,
+  //       status,
+  //     });
 
-  dispatch({ type: GET_JOBS_BEGIN })
-  try {
-    const { data } = await sp.get(url)
-    const { jobs, totalJobs, numOfPages } = data
+  //     console.log(LKJ);
+
+  //     dispatch({
+  //       type: CREATE_JOB_SUCCESS,
+  //     });
+  //     // call function instead clearValues()
+  //     dispatch({ type: CLEAR_VALUES });
+  //   } catch (error) {
+  //     if (error.response.status === 401) return;
+  //     dispatch({
+  //       type: CREATE_JOB_ERROR,
+  //       payload: { msg: error.response.data.msg },
+  //     });
+
+  //   }
+  //   clearAlert();
+  // };
+
+  const createJob = async (currentUser) => {
+    dispatch({ type: CREATE_JOB_BEGIN });
+    try {
+      const response = await sp.post('/jobs', currentUser);
+      console.log(response.data);
+
+      dispatch({ type: CREATE_JOB_SUCCESS });
+
+    } catch (error) {
+      console.log(error.response);
+      dispatch({
+        type: CREATE_JOB_ERROR,
+        payload: { msg: "JOB CREATED" },
+      });
+    }
+    clearAlert();
+  };
+
+
+  const handleChange = ({ name, value }) => {
     dispatch({
-      type: GET_JOBS_SUCCESS,
-      payload: {
-        jobs,
-        totalJobs,
-        numOfPages,
-      },
+      type: HANDLE_CHANGE,
+      payload: { name, value },
     })
-  } catch (error) {
-    console.log(error.response)
-    logoutUser()
   }
-  clearAlert()
-}
+
+  // const getJobs = async () => {
+
+  //   try{
+  //      const res = await sp.get('/jobs');
+  //      console.log("res",res,"res data ",res?.data );
+
+  //   } catch (error) {
+  //     console.log(error.response)
+  //     logoutUser()
+  //   }
+  //   clearAlert()
+  // }
+  const getJobs = async () => {
+    let url = `/jobs`
+
+    dispatch({ type: GET_JOBS_BEGIN })
+    try {
+      const { data } = await sp(url)
+      const { jobs, totalJobs, numOfPages } = data
+      dispatch({
+        type: GET_JOBS_SUCCESS,
+        payload: {
+          jobs,
+          totalJobs,
+          numOfPages,
+        },
+      })
+    } catch (error) {
+      console.log(error.response)
+      logoutUser()
+    }
+    clearAlert()
+  }
+
+ 
 
 
-
-return (
-  <AppContext.Provider
-    value={{
-      ...state,
-      displayAlert,
-      registerUser,
-      loginUser,
-      removeUserFromLocalStorage,
-      setupUser,
-      toggleSidebar,
-      logoutUser,
-      updateUser,
-      clearValues,
-      createJob,
-      handleChange,
-      getJobs,
-
-    }}
-  >
-    {children}
-  </AppContext.Provider>
-);
+  return (
+    <AppContext.Provider
+      value={{
+        ...state,
+        displayAlert,
+        registerUser,
+        loginUser,
+        removeUserFromLocalStorage,
+        setupUser,
+        toggleSidebar,
+        logoutUser,
+        updateUser,
+        clearValues,
+        createJob,
+        handleChange,
+        getJobs,
+        setEditJob,
+        deleteJob,
+        
+      }}
+    >
+      {children}
+    </AppContext.Provider>
+  );
 };
 // make sure use
 export const useAppContext = () => {
