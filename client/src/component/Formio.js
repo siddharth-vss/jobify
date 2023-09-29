@@ -47,7 +47,7 @@ const Formio = ({ name, value, type, onChange, id="", func, confirm, checkbox })
             name={name}
             onChange={onChange}
             className='form-input'
-            required
+         
           />
         </div>
       }

@@ -16,7 +16,11 @@ console.log(req.body,req.user);
   res.status(400).json({ job });
 };
 const getAllJob = async(req,res) =>{
-  res.send("getAllJob")
+  const jobs = await Job.find({ createdBy:(req.user)  });
+
+  res
+    .status(200)
+    .json({ jobs, totalJobs: jobs.length, numOfPages: 1 });
 }
 const deletJob = async(req,res) =>{
   res.send("deletJob")

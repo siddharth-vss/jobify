@@ -11,21 +11,25 @@ const AddJob = () => {
     displayAlert,
     position,
     company,
+    // handleChange,
     jobLocation,
     jobType,
     jobTypeOptions,
     status,
     statusOptions,
+    clearValues,
+    createJob,
   } = useAppContext();
 
-const[form,setForm]=useState({
-  position:position,
-  company:company,
-  jobLocation:jobLocation,
-  status:status,
-  jobType:jobType,
+  const dt ={
+    position:position,
+    company:company,
+    jobLocation:jobLocation,
+    jobType:jobType,
+    status:status
+  }
 
-});
+const [form,setform] = useState(dt);
 
    
 
@@ -36,14 +40,20 @@ const[form,setForm]=useState({
       displayAlert();
       return;
     }
-    console.log(form);
+    // console.log(form);
+    if (isEditing) {
+          // eventually editJob()
+          return;
+        }
+        createJob(form);
+        clearValues();
   };
 
   const handleJobInput = (e) => {
     const name = e.target.name;
     const value = e.target.value;
-    console.log(`${name}:${value}`);
-    setForm({...form,[name]:value});
+    // console.log(`${name}:${value}`);
+    setform({...form, [name] :value });
   };
 
   return (
@@ -116,8 +126,3 @@ const[form,setForm]=useState({
 };
 
 export default AddJob;
-
-
-
-
-

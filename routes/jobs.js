@@ -7,7 +7,7 @@ let {createJob,getAllJob,deletJob,updateJob,showState} = require("../controller/
 
 
 router.route('/state').get(showState);
-router.route('/').get(getAllJob);
+router.route('/').get(auth,getAllJob);
 router.route('/').post(auth,createJob);
 router.route('/:id').patch(updateJob);
 router.route('/:id').delete(deletJob);
