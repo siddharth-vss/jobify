@@ -262,11 +262,14 @@ button:disabled {
 .form-select,
 .form-btn {
   height: 35px;
+  font-size: small;
 }
 .form-row {
   margin-bottom: 1rem;
  
 }
+
+
 
 .form-textarea {
   height: 7rem;

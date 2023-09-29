@@ -35,7 +35,9 @@ app.use('/',user);
 app.use('/jobs',jobs);
 
 app.get('*',(req,res)=>{
-    res.send(`<h1>ROUTE DOES NOT EXIST</h1>`);
+    res.send(`<h1 style="
+    color: red;
+">ROUTE DOES NOT EXIST</h1>`);
 })
 
 app.listen(process.env.PORT,()=>{

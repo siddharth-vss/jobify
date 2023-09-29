@@ -1,19 +1,16 @@
-
-
-
-
+let bodyparser = require('body-parser');
 
 let Job = require('../models/job');
  
 
 const createJob = async (req, res) => {
   const { position, company } = req.body;
-
+console.log(req.body,req.user);
   if (!position || !company) {
     throw new BadRequestError('Please Provide All Values');
   }
 
-  req.body.createdBy = req.user._id;
+  req.body.createdBy = req.user;
 
   const job = await Job.create(req.body);
   res.status(400).json({ job });

@@ -1,5 +1,6 @@
 let express = require('express');
 let router = express.Router();
+let {auth} = require('../middleware/auth');
 let {createJob,getAllJob,deletJob,updateJob,showState} = require("../controller/jobcontroller");
 
 
@@ -7,7 +8,7 @@ let {createJob,getAllJob,deletJob,updateJob,showState} = require("../controller/
 
 router.route('/state').get(showState);
 router.route('/').get(getAllJob);
-router.route('/').post(createJob);
+router.route('/').post(auth,createJob);
 router.route('/:id').patch(updateJob);
 router.route('/:id').delete(deletJob);
 
