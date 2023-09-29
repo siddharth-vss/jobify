@@ -5,15 +5,15 @@ let Job = require('../models/job');
 
 const createJob = async (req, res) => {
   const { position, company } = req.body;
-console.log(req.body,req.user);
+//console.log("Create Job SERVER ",req.body,req.user);
   if (!position || !company) {
     throw new BadRequestError('Please Provide All Values');
   }
 
   req.body.createdBy = req.user;
-
+  console.log()
   const job = await Job.create(req.body);
-  res.status(400).json({ job });
+  res.status(200).json({ job });
 };
 const getAllJob = async(req,res) =>{
   const jobs = await Job.find({ createdBy:(req.user)  });
