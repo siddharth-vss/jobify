@@ -2,16 +2,15 @@ import { Formin, Alert, FormRowSelect } from '../../component/index';
 import { useAppContext } from '../../context/appContext';
 import Wrapper from '../../assets/wrappers/DashboardFormPage';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 const AddJob = () => {
   document.title ='JOBIFY-Add Job'
   const {
     isEditing,
     showAlert,
-    // user,
     displayAlert,
     position,
     company,
-    // handleChange,
     jobLocation,
     jobType,
     jobTypeOptions,
@@ -19,8 +18,9 @@ const AddJob = () => {
     statusOptions,
     clearValues,
     createJob,
+    editJob,
   } = useAppContext();
-
+  const navigate = useNavigate();
   const dt ={
     position:position,
     company:company,
@@ -42,7 +42,8 @@ const [form,setform] = useState(dt);
     }
     // console.log(form);
     if (isEditing) {
-          // eventually editJob()
+           editJob(form);
+           setTimeout ( ()=>{navigate('/all-job');},2000)
           return;
         }
         createJob(form);

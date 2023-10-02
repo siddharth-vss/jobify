@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useReducer, useContext  } from 'react';
+import React, { useReducer, useContext } from 'react';
 import reducer from './reducer';
 import {
   DISPLAY_ALERT,
@@ -25,6 +25,12 @@ import {
   CREATE_JOB_ERROR,
   GET_JOBS_BEGIN,
   GET_JOBS_SUCCESS,
+  SET_EDIT_JOB,
+  DELETE_JOB_BEGIN,
+  EDIT_JOB_BEGIN,
+  EDIT_JOB_SUCCESS,
+  EDIT_JOB_ERROR,
+
 
 } from './actions'
 import axios from 'axios';
@@ -80,6 +86,7 @@ const AppContext = React.createContext();
 const AppProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
+  
 
   const sp = axios.create({
     baseURL: 'http://localhost:5000',
@@ -87,8 +94,6 @@ const AppProvider = ({ children }) => {
       Authorization: `Bearer ${state.token}`,
     },
   });
-
-
   // response interceptor
   sp.interceptors.request.use(
     (config) => {
@@ -140,13 +145,49 @@ const AppProvider = ({ children }) => {
     }
     clearAlert();
   };
-    const setEditJob = (id) => {
-    console.log(`set edit job : ${id}`)
+
+
+  const setEditJob = (id) => {
+    // console.log('edit =>', id);
+    // console.log(state);
+    dispatch({ type: SET_EDIT_JOB, payload: { id } })
   }
-  const deleteJob = (id) =>{
-    console.log(`delete : ${id}`)
-  }
+  const editJob = async (currentUser) => {
+    dispatch({ type: EDIT_JOB_BEGIN });
+    try {
+      const { position, company, jobLocation, jobType, status } = currentUser;
   
+      await sp.patch(`/jobs/${state.editJobId}`, {
+        company,
+        position,
+        jobLocation,
+        jobType,
+        status,
+      });
+      dispatch({
+        type: EDIT_JOB_SUCCESS,
+      });
+      dispatch({ type: CLEAR_VALUES });
+      
+    } catch (error) {
+      if (error.response.status === 401) return;
+      dispatch({
+        type: EDIT_JOB_ERROR,
+        payload: { msg: error.response.data.msg },
+      });
+    }
+    clearAlert();
+  };
+  const deleteJob = async (id) => {
+    dispatch({ type: DELETE_JOB_BEGIN });
+    try {
+      await sp.delete(`/jobs/${id}`);
+      getJobs();
+    } catch (error) {
+      logoutUser();
+    }
+  }
+
   const clearAlert = () => {
     setTimeout(() => {
       dispatch({
@@ -310,7 +351,7 @@ const AppProvider = ({ children }) => {
       console.log(error.response);
       dispatch({
         type: CREATE_JOB_ERROR,
-        payload: { msg: "JOB CREATED" },
+        payload: { msg: error.response.data.msg },
       });
     }
     clearAlert();
@@ -358,7 +399,7 @@ const AppProvider = ({ children }) => {
     clearAlert()
   }
 
- 
+
 
 
   return (
@@ -379,7 +420,9 @@ const AppProvider = ({ children }) => {
         getJobs,
         setEditJob,
         deleteJob,
-        
+        editJob,
+
+
       }}
     >
       {children}
