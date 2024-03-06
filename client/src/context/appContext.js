@@ -30,6 +30,10 @@ import {
   EDIT_JOB_BEGIN,
   EDIT_JOB_SUCCESS,
   EDIT_JOB_ERROR,
+  SHOW_STATS_BEGIN,
+  SHOW_STATS_SUCCESS,
+  CLEAR_FILTERS,
+  CHANGE_PAGE,
 
 
 } from './actions'
@@ -55,6 +59,12 @@ export const initialState = {
   userLocation: userLocation || '',
   jobLocation: userLocation || '',
 
+
+
+  interview : 56 ,
+  pending : 53,
+  declined: 10,
+
   /**
   |--------------------------------------------------|
   |       for job                                    |
@@ -70,7 +80,14 @@ export const initialState = {
   statusOptions: ['pending', 'interview', 'declined'],
   status: 'pending',
 
+  search: '',
+  searchStatus: 'all',
+  searchType: 'all',
+  sort: 'latest',
+  sortOptions: ['latest', 'oldest', 'a-z', 'z-a'],
 
+  stats: {},
+  monthlyApplications: [],
 
   jobs: [],
   totalJobs: 0,
@@ -119,6 +136,12 @@ const AppProvider = ({ children }) => {
   );
 
 
+  const clearFilters = () => {
+    dispatch({ type: CLEAR_FILTERS });
+  };
+
+
+    
   const displayAlert = () => {
     dispatch({
       type: DISPLAY_ALERT,
@@ -207,6 +230,26 @@ const AppProvider = ({ children }) => {
     localStorage.removeItem('user');
     localStorage.removeItem('location');
   };
+
+  const showStats = async () => {
+    dispatch({ type: SHOW_STATS_BEGIN })
+    try {
+      const { data } = await sp.get('/jobs/state')
+      console.log(data);
+      dispatch({
+        type: SHOW_STATS_SUCCESS,
+        payload: {
+          stats: data.defaultStats,
+          monthlyApplications: data.monthlyApplications,
+        },
+      })
+    } catch (error) {
+console.log(error.response)
+      // logoutUser()
+    }
+
+clearAlert()
+  }
 
   const registerUser = async (currentUser) => {
     dispatch({ type: REGISTER_USER_BEGIN });
@@ -307,6 +350,9 @@ const AppProvider = ({ children }) => {
     dispatch({ type: CLEAR_VALUES })
   }
 
+  const changePage = (page) => {
+    dispatch({ type: CHANGE_PAGE, payload: { page } })
+  }
 
   // const createJob = async () => {
   //   dispatch({ type: CREATE_JOB_BEGIN });
@@ -378,12 +424,16 @@ const AppProvider = ({ children }) => {
   //   clearAlert()
   // }
   const getJobs = async () => {
-    let url = `/jobs`
-
-    dispatch({ type: GET_JOBS_BEGIN })
+    // will add page later
+    const { search, searchStatus, searchType, sort } = state;
+    let url = `/jobs?status=${searchStatus}&jobType=${searchType}&sort=${sort}`;
+    if (search) {
+      url = url + `&search=${search}`;
+    }
+    dispatch({ type: GET_JOBS_BEGIN });
     try {
-      const { data } = await sp(url)
-      const { jobs, totalJobs, numOfPages } = data
+      const { data } = await sp.get(url);
+      const { jobs, totalJobs, numOfPages } = data;
       dispatch({
         type: GET_JOBS_SUCCESS,
         payload: {
@@ -391,13 +441,12 @@ const AppProvider = ({ children }) => {
           totalJobs,
           numOfPages,
         },
-      })
+      });
     } catch (error) {
-      console.log(error.response)
-      logoutUser()
+      // logoutUser()
     }
-    clearAlert()
-  }
+    clearAlert();
+  };
 
 
 
@@ -407,6 +456,7 @@ const AppProvider = ({ children }) => {
       value={{
         ...state,
         displayAlert,
+        showStats,
         registerUser,
         loginUser,
         removeUserFromLocalStorage,
@@ -418,9 +468,11 @@ const AppProvider = ({ children }) => {
         createJob,
         handleChange,
         getJobs,
+        clearFilters,
         setEditJob,
         deleteJob,
         editJob,
+        changePage,
 
 
       }}
