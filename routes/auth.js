@@ -13,8 +13,8 @@ const apiLimiter = rateLimiter({
   message: 'Too many requests from this IP, please try again after 15 minutes',
 });
 
-router.route('/').get((req,res)=>{res.send(`<marquee><h1>WELCOME TO JOBIFY SERVER</h1></marquee>`);
-})
+// router.route('/').get((req,res)=>{res.send(`<marquee><h1>WELCOME TO JOBIFY SERVER</h1></marquee>`);
+// })
 /**
 |--------------------------------------------------|
 |we can write routes with following two styles :   |
