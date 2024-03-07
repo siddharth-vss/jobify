@@ -5,7 +5,13 @@ let {auth} = require("../middleware/auth");
 let  {log,reg} = require("../middleware/midauth");
 let {register,login,updateUser} = require("../controller/authcontroller");
 
+let rateLimiter =require('express-rate-limit');
 
+const apiLimiter = rateLimiter({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10,
+  message: 'Too many requests from this IP, please try again after 15 minutes',
+});
 
 router.route('/').get((req,res)=>{res.send(`<marquee><h1>WELCOME TO JOBIFY SERVER</h1></marquee>`);
 })
@@ -25,8 +31,8 @@ router.route('/').get((req,res)=>{res.send(`<marquee><h1>WELCOME TO JOBIFY SERVE
 |--------------------------------------------------|
 */
 
-router.route('/').post(reg,register);
-router.route('/login').post(log,login);
+router.route('/').post(apiLimiter,reg,register);
+router.route('/login').post(apiLimiter,log,login);
 router.route('/update').patch(auth,updateUser);
   
 

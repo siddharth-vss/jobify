@@ -5,6 +5,9 @@
 */
 let express = require('express');
 let bodyParser=require("body-parser");
+
+let path =require('path');
+
 let dotenv = require('dotenv');
 let app = express();
 let jobs = require('./routes/jobs');
@@ -18,7 +21,12 @@ let cors = require('cors');
 */
 
 dotenv.config();
-
+/**
+|--------------------------------------------------
+|  only when ready to deploy                                                
+|--------------------------------------------------
+*/
+app.use(express.static(path.resolve(__dirname,"./public")) )
 
 /**
 |--------------------------------------------------
@@ -34,12 +42,11 @@ app.use(cors({credentials:true}));
 app.use('/',user);
 app.use('/jobs',jobs);
 
-app.get('*',(req,res)=>{
-    res.send(`<h1 style="
-    color: red;
-">ROUTE DOES NOT EXIST</h1>`);
-})
 
+app.get('*', function (req, res) {
+  res.sendFile(path.resolve(__dirname,'./client/build','index.html'));
+    
+  });
 app.listen(process.env.PORT,()=>{
     console.log(`port runnig on http://localhost:${process.env.PORT}`);
-})
+}) 
